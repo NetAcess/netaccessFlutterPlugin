@@ -1,0 +1,51 @@
+group 'com.plugin.na_flutter'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 32
+
+    buildFeatures {
+        dataBinding  = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 16
+        multiDexEnabled true
+    }
+
+    dependencies {
+        implementation "com.google.android.gms:play-services-location:11.0.1"
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation "com.google.android.gms:play-services-location:16.+"
+    implementation "com.google.android.gms:play-services-maps:16.+"
+    implementation files('libs')
+}
