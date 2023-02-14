@@ -100,49 +100,49 @@ public class PrintActivity extends AppCompatActivity {
             int logoResult = ptr.iBmpPrint(getApplicationContext(), R.raw.logo);
             android.util.Log.e(TAG, "print: -> logo 12.14" + logoResult);
 
-            Bitmap bmpDrawQRCode = QRC.bmpDrawQRCode(TextGenerator.ImageWidth.Inch_2, "2~2~66~0~L~0~0~~2023-02-10 00:00:00~0~0~0~0~1~0~~2~2023/02/14~417-12345678910123");
+            Bitmap bmpDrawQRCode = QRC.bmpDrawQRCode(TextGenerator.ImageWidth.Inch_2,   inputData.get("qrData"));
             byte[] bBmpFileData = TextGenerator.bGetBmpFileData(bmpDrawQRCode);
             ByteArrayInputStream bis = new ByteArrayInputStream(bBmpFileData);
             int qrCodeResult = ptr.iBmpPrint(bis);
             android.util.Log.e(TAG, "print: -> QRcode" + qrCodeResult);
 
-            String data = "SCSL - KOPPA UNIT", title = "";
-            if(data.length() < 24) {
-                int val = (24 - data.length()) / 2, i = 0;
+            String name =  inputData.get("name"), title = "";
+            if(name.length() < 24) {
+                int val = (24 - name.length()) / 2, i = 0;
                 System.out.println("" + val);
                 while(i < val) {
                     title = title + " ";
                     i++;
                 }
-                title = title + data;
+                title = title + name;
             }
 
             ptr.iPrinterAddData(PR_FONTLARGEBOLD, title);
             ptr.iPrinterAddData(PR_FONTLARGEBOLD, "       TRIP SHEET       ");
-            ptr.iPrinterAddData(PR_FONTLARGEBOLD, "CRUSHING SEASON: 223M");
+            ptr.iPrinterAddData(PR_FONTLARGEBOLD, "CRUSHING SEASON: " + inputData.get("crushingSeason"));
 
             ptr.iPrinterAddData(PR_FONTLARGENORMAL, "TS NO: " + inputData.get("mac"));
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "TS DATE&TIME: 02/08/2022");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "15:13:16");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "DIV: CANE OFFICE -CONTROL");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "SEC: OTHERWEIGHMENT");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "C O NO: 00005");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "RNO: 01R000003/01R0000");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "R NAME: KARTHICK");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "F NAME: VEL");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "VIL: OTHERWEIGHMENT");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "VILDIS: 150");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "D.O.P - P/R: 30/05/2021 - R01");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "VAR: CO 86032");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "GL NO: 01G001427");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "GL NAME: SENTHIL");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "T MODE: L");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "PASS NO: 01P000001");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "VEH NO: TN11DK0099");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "BURNT CANE: NO");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "FALL ON CANE: NO");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "PLOT OVER: NO");
-            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "PART LOAD: NO");
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "TS DATE&TIME: " + inputData.get("tsDateTime"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL,  inputData.get("tsDateTime"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "DIV: " + inputData.get("div"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "SEC: " + inputData.get("sec"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "C O NO: " + inputData.get("cono"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "RNO: " + inputData.get("rNo"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "R NAME: " + inputData.get("rName"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "F NAME: " + inputData.get("fName"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "VIL: " + inputData.get("vil"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "VILDIS: " + inputData.get("vildis"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "D.O.P - P/R: " + inputData.get("dop"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "VAR: " + inputData.get("var"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "GL NO: " + inputData.get("glNo"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "GL NAME: " + inputData.get("glName"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "T MODE: " + inputData.get("tMode"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "PASS NO: " + inputData.get("passNo"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "VEH NO: " + inputData.get("vehNo"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "BURNT CANE: " + inputData.get("burntCane"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "FALL ON CANE: " + inputData.get("fallOnCane"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "PLOT OVER:  " + inputData.get("plotOver"));
+            ptr.iPrinterAddData(PR_FONTLARGENORMAL, "PART LOAD: " + inputData.get("partLoad"));
 
             int finalResult = ptr.iStartPrinting(1);
 
