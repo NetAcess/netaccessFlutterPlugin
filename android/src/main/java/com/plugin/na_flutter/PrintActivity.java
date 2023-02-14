@@ -36,8 +36,6 @@ public class PrintActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getBundleExtra("bundle");
         inputData = (HashMap<String, String>) bundle.getSerializable("inputData");
 
-        Button btn = (Button) findViewById(R.id.btn);
-
         try {
             setupInstance = new Setup();
             boolean activate = setupInstance.blActivateLibrary(this, R.raw.licence);
@@ -46,46 +44,39 @@ public class PrintActivity extends AppCompatActivity {
             boolean connected = mGP.createConn(inputData.get("mac"));
             Log.e("TAG1", "isCon ->" + connected);
             Toast.makeText(PrintActivity.this, "Connect -> " + connected, Toast.LENGTH_SHORT).show();
+            print();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                print();
-            }
-
-        });
     }
 
-    private void showResult(int iRtl) {
+    private String getResultError(int iRtl) {
         if (iRtl == Printer.PR_SUCCESS) {
-            Toast.makeText(getApplicationContext(), "Graphics print is success", Toast.LENGTH_SHORT).show();
+            return "Graphics print is success";
         } else if (iRtl == Printer.PR_ILLEGAL_LIBRARY) {
-            Toast.makeText(getApplicationContext(), "Library Invalid", Toast.LENGTH_SHORT).show();
+            return "Library Invalid";
         } else if (iRtl == Printer.PR_DEMO_VERSION) {
-            Toast.makeText(getApplicationContext(), "API Not supported for Demo Version", Toast.LENGTH_SHORT).show();
+            return "API Not supported for Demo Version";
         } else if (iRtl == Printer.PR_INVALID_DEVICE_ID) {
-            Toast.makeText(getApplicationContext(), "Invalid device serial number", Toast.LENGTH_SHORT).show();
+            return "Invalid device serial number";
         } else if (iRtl == Printer.PR_PLATEN_OPEN) {
-            Toast.makeText(getApplicationContext(), "printer platen is open", Toast.LENGTH_SHORT).show();
+            return "printer platen is open";
         } else if (iRtl == Printer.PR_PAPER_OUT) {
-            Toast.makeText(getApplicationContext(), "printer paper is out", Toast.LENGTH_SHORT).show();
+            return "printer paper is out";
         } else if (iRtl == Printer.PR_HIGH_HEADTEMP) {
-            Toast.makeText(getApplicationContext(), "printer High headtemp", Toast.LENGTH_SHORT).show();
+            return "printer High headtemp";
         } else if (iRtl == Printer.PR_LOW_HEADTEMP) {
-            Toast.makeText(getApplicationContext(), "printer Low headtemp", Toast.LENGTH_SHORT).show();
+            return "printer Low headtemp";
         } else if (iRtl == Printer.PR_IMPROPER_VOLTAGE) {
-            Toast.makeText(getApplicationContext(), "printer improper voltage", Toast.LENGTH_SHORT).show();
+            return "printer improper voltage";
         } else if (iRtl == Printer.PR_FAIL) {
-            Toast.makeText(getApplicationContext(), "printer failed: ", Toast.LENGTH_SHORT).show();
+            return "printer failed: ";
         } else if (iRtl == Printer.PR_PARAM_ERROR) {
-            Toast.makeText(getApplicationContext(), "Passed invalid parameter: ", Toast.LENGTH_SHORT).show();
+            return "Passed invalid parameter: ";
         } else if (iRtl == Printer.PR_INACTIVE_PERIPHERAL) {
-            Toast.makeText(getApplicationContext(), "printer failed: ", Toast.LENGTH_SHORT).show();
+            return "printer failed: ";
         }
-
+        return "";
     }
 
     private void print() {
@@ -150,6 +141,11 @@ public class PrintActivity extends AppCompatActivity {
             if (finalResult == Printer.PR_SUCCESS) {
                 Bundle resultBundle = new Bundle();
                 resultBundle.putString("printerResult", "success");
+                setResult(RESULT_OK, new Intent().putExtra("resultData", resultBundle));
+                finish();
+            } else {
+                Bundle resultBundle = new Bundle();
+                resultBundle.putString("printerResult", getResultError(finalResult));
                 setResult(RESULT_OK, new Intent().putExtra("resultData", resultBundle));
                 finish();
             }
