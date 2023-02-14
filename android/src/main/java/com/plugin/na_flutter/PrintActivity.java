@@ -100,7 +100,7 @@ public class PrintActivity extends AppCompatActivity {
             int logoResult = ptr.iBmpPrint(getApplicationContext(), R.raw.logo);
             android.util.Log.e(TAG, "print: -> logo 12.14" + logoResult);
 
-            Bitmap bmpDrawQRCode = QRC.bmpDrawQRCode(TextGenerator.ImageWidth.Inch_2,   inputData.get("qrData"));
+            Bitmap bmpDrawQRCode = QRC.bmpDrawQRCode(TextGenerator.ImageWidth.Inch_2,   inputData.get("qrdt"));
             byte[] bBmpFileData = TextGenerator.bGetBmpFileData(bmpDrawQRCode);
             ByteArrayInputStream bis = new ByteArrayInputStream(bBmpFileData);
             int qrCodeResult = ptr.iBmpPrint(bis);
