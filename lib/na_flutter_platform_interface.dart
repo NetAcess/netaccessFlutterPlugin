@@ -35,7 +35,7 @@ abstract class NaFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('goToMap() has not been implemented.');
   }
 
-  dynamic print() {
+  dynamic print(input) {
     throw UnimplementedError('print() has not been implemented.');
   }
 }

@@ -28,8 +28,8 @@ class MethodChannelNaFlutter extends NaFlutterPlatform {
   }
 
   @override
-  dynamic print() async {
-    dynamic result = await methodChannel.invokeMethod<dynamic>('print');
+  dynamic print(input) async {
+    dynamic result = await methodChannel.invokeMethod<dynamic>('print', input);
     return result;
   }
 }

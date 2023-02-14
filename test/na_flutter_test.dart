@@ -10,6 +10,25 @@ class MockNaFlutterPlatform
 
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
+
+  @override
+  getCurrentLocation() {
+    // TODO: implement getCurrentLocation
+    throw UnimplementedError();
+  }
+
+  @override
+  goToMap() {
+    // TODO: implement goToMap
+    throw UnimplementedError();
+  }
+
+  @override
+  print(input) {
+    // TODO: implement print
+    throw UnimplementedError();
+  }
+
 }
 
 void main() {

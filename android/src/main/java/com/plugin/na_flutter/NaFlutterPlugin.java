@@ -7,11 +7,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
+
+import com.leopard.api.Printer;
+import com.leopard.api.Setup;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,11 +77,17 @@ public class NaFlutterPlugin implements FlutterPlugin, MethodCallHandler, Activi
             case "goToMap":
                 Intent intent = new Intent(mActivity, Offline_Area.class);
                 mActivity.startActivityForResult(intent, 666);
-               // mActivity.startActivityForResult(mActivity, intent, 29, null);
+                // mActivity.startActivityForResult(mActivity, intent, 29, null);
                 break;
 
             case "print":
-
+                HashMap<String, String> args = call.arguments();
+                Log.e("TAG", "onMethodCall: " + args);
+                Intent printIntent = new Intent(mActivity, PrintActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("inputData", args);
+                printIntent.putExtra("bundle", bundle);
+                mActivity.startActivityForResult(printIntent, 777);
                 //result.success("successfully reached NaFlutterPlugin");
                 break;
 
@@ -83,7 +96,6 @@ public class NaFlutterPlugin implements FlutterPlugin, MethodCallHandler, Activi
                 break;
         }
     }
-
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
@@ -111,7 +123,6 @@ public class NaFlutterPlugin implements FlutterPlugin, MethodCallHandler, Activi
     public void onDetachedFromActivity() {
         mActivity = null;
     }
-
 
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

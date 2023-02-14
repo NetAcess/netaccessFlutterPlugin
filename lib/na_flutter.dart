@@ -14,7 +14,7 @@ class NaFlutter {
     return NaFlutterPlatform.instance.goToMap();
   }
 
-  dynamic print() {
-    return NaFlutterPlatform.instance.print();
+  dynamic print(input) {
+    return NaFlutterPlatform.instance.print(input);
   }
 }
