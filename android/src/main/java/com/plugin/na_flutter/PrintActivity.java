@@ -28,6 +28,9 @@ import io.flutter.Log;
 public class PrintActivity extends AppCompatActivity {
     Setup setupInstance = null;
     HashMap<String, String> inputData;
+
+    GlobalPool mGP = new GlobalPool();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,43 +43,21 @@ public class PrintActivity extends AppCompatActivity {
             setupInstance = new Setup();
             boolean activate = setupInstance.blActivateLibrary(this, R.raw.licence);
             Log.e("activate", String.valueOf(activate));
-            GlobalPool mGP = new GlobalPool();
             boolean connected = mGP.createConn(inputData.get("mac"));
             Log.e("TAG1", "isCon ->" + connected);
             Toast.makeText(PrintActivity.this, "Connect -> " + connected, Toast.LENGTH_SHORT).show();
-            print();
+            if(connected) {
+                print();
+            } else {
+                mGP.closeConn();
+                Bundle resultBundle = new Bundle();
+                resultBundle.putString("printerResult", "ConnectionFailed");
+                setResult(RESULT_OK, new Intent().putExtra("resultData", resultBundle));
+                finish();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private String getResultError(int iRtl) {
-        if (iRtl == Printer.PR_SUCCESS) {
-            return "Graphics print is success";
-        } else if (iRtl == Printer.PR_ILLEGAL_LIBRARY) {
-            return "Library Invalid";
-        } else if (iRtl == Printer.PR_DEMO_VERSION) {
-            return "API Not supported for Demo Version";
-        } else if (iRtl == Printer.PR_INVALID_DEVICE_ID) {
-            return "Invalid device serial number";
-        } else if (iRtl == Printer.PR_PLATEN_OPEN) {
-            return "printer platen is open";
-        } else if (iRtl == Printer.PR_PAPER_OUT) {
-            return "printer paper is out";
-        } else if (iRtl == Printer.PR_HIGH_HEADTEMP) {
-            return "printer High headtemp";
-        } else if (iRtl == Printer.PR_LOW_HEADTEMP) {
-            return "printer Low headtemp";
-        } else if (iRtl == Printer.PR_IMPROPER_VOLTAGE) {
-            return "printer improper voltage";
-        } else if (iRtl == Printer.PR_FAIL) {
-            return "printer failed: ";
-        } else if (iRtl == Printer.PR_PARAM_ERROR) {
-            return "Passed invalid parameter: ";
-        } else if (iRtl == Printer.PR_INACTIVE_PERIPHERAL) {
-            return "printer failed: ";
-        }
-        return "";
     }
 
     private void print() {
@@ -87,7 +68,6 @@ public class PrintActivity extends AppCompatActivity {
             Printer ptr = new Printer(setupInstance, outSt, inSt);
 
             // todo -> print design here
-
             int logoResult = ptr.iBmpPrint(getApplicationContext(), R.raw.logo);
             android.util.Log.e(TAG, "print: -> logo 12.14" + logoResult);
 
@@ -139,11 +119,13 @@ public class PrintActivity extends AppCompatActivity {
             ptr.iPaperFeed();
 
             if (finalResult == Printer.PR_SUCCESS) {
+                mGP.closeConn();
                 Bundle resultBundle = new Bundle();
                 resultBundle.putString("printerResult", "success");
                 setResult(RESULT_OK, new Intent().putExtra("resultData", resultBundle));
                 finish();
             } else {
+                mGP.closeConn();
                 Bundle resultBundle = new Bundle();
                 resultBundle.putString("printerResult", getResultError(finalResult));
                 setResult(RESULT_OK, new Intent().putExtra("resultData", resultBundle));
@@ -153,6 +135,35 @@ public class PrintActivity extends AppCompatActivity {
             Log.e("TAG1", e.toString());
             Toast.makeText(PrintActivity.this, "Something went wrong, Please try agin", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String getResultError(int iRtl) {
+        if (iRtl == Printer.PR_SUCCESS) {
+            return "Graphics print is success";
+        } else if (iRtl == Printer.PR_ILLEGAL_LIBRARY) {
+            return "Library Invalid";
+        } else if (iRtl == Printer.PR_DEMO_VERSION) {
+            return "API Not supported for Demo Version";
+        } else if (iRtl == Printer.PR_INVALID_DEVICE_ID) {
+            return "Invalid device serial number";
+        } else if (iRtl == Printer.PR_PLATEN_OPEN) {
+            return "printer platen is open";
+        } else if (iRtl == Printer.PR_PAPER_OUT) {
+            return "printer paper is out";
+        } else if (iRtl == Printer.PR_HIGH_HEADTEMP) {
+            return "printer High headtemp";
+        } else if (iRtl == Printer.PR_LOW_HEADTEMP) {
+            return "printer Low headtemp";
+        } else if (iRtl == Printer.PR_IMPROPER_VOLTAGE) {
+            return "printer improper voltage";
+        } else if (iRtl == Printer.PR_FAIL) {
+            return "printer failed: ";
+        } else if (iRtl == Printer.PR_PARAM_ERROR) {
+            return "Passed invalid parameter: ";
+        } else if (iRtl == Printer.PR_INACTIVE_PERIPHERAL) {
+            return "printer failed: ";
+        }
+        return "";
     }
 
 }
