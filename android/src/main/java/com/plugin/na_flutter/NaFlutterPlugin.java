@@ -140,6 +140,10 @@ public class NaFlutterPlugin implements FlutterPlugin, MethodCallHandler, Activi
             mMap.put("savelng", resultData.getString("savelng"));
 
             mResult.success(mMap);
+        } else if(requestCode == 777 && resultCode == RESULT_OK) {
+            Bundle resultData = data.getExtras().getBundle("resultData");
+            Log.e("onActivityResult", "onActivityResult: " + resultData.get("printerResult"));
+            mResult.success(resultData.get("printerResult")); // todo here
         }
         return false;
     }

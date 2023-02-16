@@ -85,7 +85,9 @@ class _HomePageState extends State<HomePage> {
 
           Center(child: Text('Print Screen Result: $_printScreenResult\n')),
           ElevatedButton(onPressed: () {
-            Navigator.pushNamed(context, "scanner");
+            final naFlutterPlugin = NaFlutter();
+            naFlutterPlugin.print({"mac" : "00:04:3E:90:AC:F9", "qrdt" : "123456", "fact" : "sdasd"});
+            //Navigator.pushNamed(context, "scanner");
           }, child: const Text('Test Print')),
         ],
       ),
