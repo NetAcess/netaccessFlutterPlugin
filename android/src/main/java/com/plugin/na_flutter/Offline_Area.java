@@ -1076,8 +1076,10 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 
 					} else if (purpose.equalsIgnoreCase("back")) {
 						dialog.dismiss();
+						Bundle bundle = new Bundle();
+						bundle.putString("xmlValue", "aborted");
+						setResult(RESULT_OK, new Intent().putExtra("resultData", bundle));
 						finish();
-
 					} else {
 						dialog.dismiss();
 					}
