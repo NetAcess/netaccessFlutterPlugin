@@ -928,7 +928,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 
 			String savelat = "0";
 			String savelng = "0";
-			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			/*locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 			if (ActivityCompat.checkSelfPermission(
 					this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
 					this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -942,6 +942,16 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 					savelat = String.valueOf(lat);
 					savelng = String.valueOf(longi);
 
+				}
+			}*/
+			GetGPSTracker gps = new GetGPSTracker(c);
+			savelat = gps.getLatitude() + "";
+			savelng = gps.getLongitude() + "";
+			if (savelng.equals("0") || savelng.equals("0")) {
+				String data = gps.getAnyProviderLocation();
+				if (data != null) {
+					savelat = data.split(",")[0];
+					savelng = data.split(",")[1];
 				}
 			}
 

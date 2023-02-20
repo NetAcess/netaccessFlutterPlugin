@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> {
     String _currentLocation = 'nill';
     String _mapScreenResult = 'nill';
     String _printScreenResult = 'nill';
+
     final _naFlutterPlugin = NaFlutter();
 
     return Scaffold(
@@ -56,6 +57,7 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(onPressed: () async {
             try {
               _platformVersion = await _naFlutterPlugin.getPlatformVersion() ?? 'Unknown platform version';
+              showSnack(_platformVersion);
             } on PlatformException {
               _platformVersion = 'Failed to get platform version.';
             }
@@ -66,6 +68,7 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(onPressed: () async {
             try {
               _currentLocation = await _naFlutterPlugin.getCurrentLocation() ?? 'Unknown platform version';
+              showSnack(_currentLocation);
             } on PlatformException {
               _currentLocation = 'Cant get Current Location';
             }
@@ -77,6 +80,7 @@ class _HomePageState extends State<HomePage> {
             try {
               Map result = await _naFlutterPlugin.goToMap() ?? 'Unknown platform version';
               _mapScreenResult = result['xmlValue'];
+              showSnack(result["savelat"] + " : " + result['savelng']);
             } on PlatformException {
               _mapScreenResult = 'platform Exception';
             }
@@ -93,4 +97,9 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  showSnack(msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
 }
