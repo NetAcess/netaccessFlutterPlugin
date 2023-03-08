@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:na_flutter/na_flutter.dart';
 import 'package:na_flutter_example/bluetoothScan.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -78,7 +79,11 @@ class _HomePageState extends State<HomePage> {
           Center(child: Text('Map Screen Result: $_mapScreenResult\n')),
           ElevatedButton(onPressed: () async {
             try {
+              if(await Permission.location.isDenied) {
+                await Permission.location.request();
+              }
               Map result = await _naFlutterPlugin.goToMap() ?? 'Unknown platform version';
+
               _mapScreenResult = result['xmlValue'];
               showSnack(result["savelat"] + " : " + result['savelng']);
             } on PlatformException {

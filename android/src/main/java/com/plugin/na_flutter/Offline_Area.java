@@ -95,6 +95,8 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 	boolean isRunning = false;
 	CountDownTimer mTimer;
 
+	private static final String TAG = "Offline_Area";
+
 	public static ObservableField<String> screenPixel = new ObservableField<>();
 
 	private OnClickListener reset_button_listener = new OnClickListener() {
@@ -254,6 +256,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		System.out.println("Jeeva + OnCreate Called");
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -273,6 +276,8 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 		screenPixel.addOnPropertyChangedCallback(new androidx.databinding.Observable.OnPropertyChangedCallback() {
 			@Override
 			public void onPropertyChanged(androidx.databinding.Observable sender, int propertyId) {
+				System.out.println(TAG + "onPropertyChanged: Entered");
+				System.out.println(TAG + "onPropertyChanged: " + String.valueOf(map != null));
 				isDragging = true;
 				Projection projection = map.getProjection();
 				// Returns the geographic location that corresponds to a screen location
@@ -281,33 +286,35 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 				y = Math.round(Float.parseFloat(screenPixel.get().split("\\|")[1]));
 				LatLng geographicalPosition = projection.fromScreenLocation(new Point(x, y));
 				tempMarker.setPosition(geographicalPosition);
-				if(helperMarker.getTitle().split("\\|")[0].equals("Real")) {
-					for (int i = 0; i < markerList.size(); i++) {
-						if(helperMarker.getTitle().equals(markerList.get(i).getTitle())) {
-							String title = markerList.get(i).getTitle();
-							markerList.remove(i);
+				if(helperMarker != null) {
+					if(helperMarker.getTitle().split("\\|")[0].equals("Real")) {
+						for (int i = 0; i < markerList.size(); i++) {
+							if(helperMarker.getTitle().equals(markerList.get(i).getTitle())) {
+								String title = markerList.get(i).getTitle();
+								markerList.remove(i);
 
-							MarkerOptions marker = new MarkerOptions();
-							marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.square));
-							marker.alpha(0.8f);
-							marker.draggable(true);
-							marker.position(geographicalPosition);
-							marker.title(title);
-							markerList.add(i, marker);
-							measureView.importFromMap(marker.getPosition().latitude, marker.getPosition().longitude, (int)Math.round(currentLocation.getAccuracy()), i, true);
+								MarkerOptions marker = new MarkerOptions();
+								marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.square));
+								marker.alpha(0.8f);
+								marker.draggable(true);
+								marker.position(geographicalPosition);
+								marker.title(title);
+								markerList.add(i, marker);
+								measureView.importFromMap(marker.getPosition().latitude, marker.getPosition().longitude, (int)Math.round(currentLocation.getAccuracy()), i, true);
+							}
 						}
+					} else {
+						MarkerOptions marker = new MarkerOptions();
+						marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.square));
+						//marker.position(new LatLng(helperMarker.getPosition().latitude, helperMarker.getPosition().longitude));
+						marker.position(geographicalPosition);
+						marker.draggable(true);
+						marker.title("Real|" + geographicalPosition);
+						int pos = Integer.parseInt(helperMarker.getTitle().split("\\|")[1]);
+						helperMarker = marker;
+						markerList.add(pos + 1, marker);
+						measureView.importFromMap(geographicalPosition.latitude, geographicalPosition.longitude, (int)Math.round(currentLocation.getAccuracy()),pos + 1, false);
 					}
-				} else {
-					MarkerOptions marker = new MarkerOptions();
-					marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.square));
-					//marker.position(new LatLng(helperMarker.getPosition().latitude, helperMarker.getPosition().longitude));
-					marker.position(geographicalPosition);
-					marker.draggable(true);
-					marker.title("Real|" + geographicalPosition);
-					int pos = Integer.parseInt(helperMarker.getTitle().split("\\|")[1]);
-					helperMarker = marker;
-					markerList.add(pos + 1, marker);
-					measureView.importFromMap(geographicalPosition.latitude, geographicalPosition.longitude, (int)Math.round(currentLocation.getAccuracy()),pos + 1, false);
 				}
 				isDragging = false;
 				detectDragging();
@@ -558,7 +565,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 //		int plotstatus = pref.getInt("ANOTHERPLOTSTATUS", 0);
 		int latlength = fLatlist.size();
 
-		GETLOCATION_POJO locpojo = null;
+		LocationPojo locpojo = null;
 		for (int i = 0; i < latlength; i++) {
 			//plot status is used to plot another area if anpther plot is enabled uncomment this below part
 			/*locpojo = new GETLOCATION_POJO(String.valueOf(plotstatus),
@@ -566,17 +573,17 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 					String.valueOf(fLatlist.get(i)), String.valueOf(fLnglist
 							.get(i)));*/
 			if (measureView.getType().equalsIgnoreCase("Manual")) {
-				locpojo = new GETLOCATION_POJO("1",
+				locpojo = new LocationPojo("1",
 						String.valueOf(fAcclist.get(i)), fFetchTimelist.get(i),
 						String.valueOf(fLatlist.get(i)), String.valueOf(fLnglist
 						.get(i)));
 			} else if (measureView.getType().equalsIgnoreCase("Auto")) {
-				locpojo = new GETLOCATION_POJO("1",
+				locpojo = new LocationPojo("1",
 						String.valueOf(fAcclist.get(i)), fTimelist.get(i),
 						String.valueOf(fLatlist.get(i)), String.valueOf(fLnglist
 						.get(i)));
 			} else {
-				locpojo = new GETLOCATION_POJO("1",
+				locpojo = new LocationPojo("1",
 						String.valueOf(fAcclist.get(i)), mFetchTimelist.get(i),
 						String.valueOf(fLatlist.get(i)), String.valueOf(fLnglist
 						.get(i)));
@@ -649,13 +656,13 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 		editor.putString("XMLVALUE", kml);
 		editor.commit();
 		if (measureView.getType().equalsIgnoreCase("Manual")) {
-			GETXML_POJO pojo = new GETXML_POJO("Manual", kml);
+			XmlPojo pojo = new XmlPojo("Manual", kml);
 			db.addXML(pojo);
 		} else if (measureView.getType().equalsIgnoreCase("Auto")) {
-			GETXML_POJO pojo = new GETXML_POJO("Auto", kml);
+			XmlPojo pojo = new XmlPojo("Auto", kml);
 			db.addXML(pojo);
 		} else {
-			GETXML_POJO pojo = new GETXML_POJO("Map", kml);
+			XmlPojo pojo = new XmlPojo("Map", kml);
 			db.addXML(pojo);
 		}
 
@@ -1269,7 +1276,10 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 
 	@Override
 	public void onMapReady(GoogleMap googleMap) {
+		System.out.println(TAG + " onMapReady: Entered");
 		map = googleMap;
+		System.out.println(TAG + " onMapReady: " + (map != null));
+
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 			// TODO: Consider calling
 			//    ActivityCompat#requestPermissions

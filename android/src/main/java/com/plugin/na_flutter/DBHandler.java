@@ -81,10 +81,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void addgetlocation(GETLOCATION_POJO getlocation_pojo) {
+    public void addgetlocation(LocationPojo locationPojo) {
         //
 
-        String[] args = {getlocation_pojo.getFcnt(), getlocation_pojo.getAccy(), getlocation_pojo.getFtim(), getlocation_pojo.getLat(), getlocation_pojo.getLng()}; // where
+        String[] args = {locationPojo.getFcnt(), locationPojo.getAccy(), locationPojo.getFtim(), locationPojo.getLat(), locationPojo.getLng()}; // where
         // 1
         // is
         // the
@@ -99,7 +99,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void addXML(GETXML_POJO xmlpojo) {
+    public void addXML(XmlPojo xmlpojo) {
         //
 
         String[] args = {xmlpojo.getSno(), xmlpojo.getXml()
@@ -117,7 +117,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
-    public List<GETLOCATION_POJO> Listall_latLngs(String accy) {
+    public List<LocationPojo> Listall_latLngs(String accy) {
 
 //		String query = "Select * FROM " + getlocation + " WHERE accy <"+ "cast("+accy+" as integer)" ;
         /* + " WHERE actv = '1' ORDER BY  prty, " + field ; */
@@ -137,14 +137,14 @@ public class DBHandler extends SQLiteOpenHelper {
         //query = "Select * from getlocation where cast(accy as integer) <= cast(2 as integer)";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        List<GETLOCATION_POJO> product = new ArrayList<GETLOCATION_POJO>();
+        List<LocationPojo> product = new ArrayList<LocationPojo>();
 
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
 
             do {
-                GETLOCATION_POJO product1 = new GETLOCATION_POJO();
+                LocationPojo product1 = new LocationPojo();
                 product1.setFcnt(cursor.getString(0));
                 product1.setAccy(cursor.getString(1));
                 product1.setFtim(cursor.getString(2));

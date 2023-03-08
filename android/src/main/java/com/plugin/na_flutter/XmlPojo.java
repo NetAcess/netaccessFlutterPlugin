@@ -1,16 +1,16 @@
 package com.plugin.na_flutter;
 
-public class GETXML_POJO {
+public class XmlPojo {
     private String sno;
     private String xml;
 
 
-    public GETXML_POJO() {
+    public XmlPojo() {
 
     }
 
 
-    public GETXML_POJO(String sno, String xml) {
+    public XmlPojo(String sno, String xml) {
         super();
         this.sno = sno;
         this.xml = xml;

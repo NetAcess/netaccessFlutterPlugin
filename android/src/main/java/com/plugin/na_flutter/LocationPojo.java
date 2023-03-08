@@ -1,6 +1,6 @@
 package com.plugin.na_flutter;
 
-public class GETLOCATION_POJO {
+public class LocationPojo {
 
 	private String fcnt;
 	private String accy;
@@ -9,13 +9,13 @@ public class GETLOCATION_POJO {
 	private String lng;
 	
 
-	public GETLOCATION_POJO() {
+	public LocationPojo() {
 
 	}
 
 
-	public GETLOCATION_POJO(String fcnt, String accy, String ftim, String lat,
-			String lng) {
+	public LocationPojo(String fcnt, String accy, String ftim, String lat,
+						String lng) {
 		super();
 		this.fcnt = fcnt;
 		this.accy = accy;
