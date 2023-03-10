@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.databinding.Observable;
 import androidx.databinding.ObservableField;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -95,9 +96,8 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 	boolean isRunning = false;
 	CountDownTimer mTimer;
 
-	private static final String TAG = "Offline_Area";
-
 	public static ObservableField<String> screenPixel = new ObservableField<>();
+
 
 	private OnClickListener reset_button_listener = new OnClickListener() {
 		@Override
@@ -142,6 +142,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 			/*Intent inn = new Intent(Offline_Area.this,MapActivity.class);
 			  startActivity(inn); finish();*/
 
+
 			int plotstatus = pref.getInt("ANOTHERPLOTSTATUS", 0);
 
 			plotstatus++;
@@ -169,7 +170,8 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 				} else {
 					showAlertDialog(c, "Not enough points to plot area", "Save");
 				}
-			} else if (measureView.getType().equalsIgnoreCase("Auto")) {
+			}
+			else if (measureView.getType().equalsIgnoreCase("Auto")) {
 				ArrayList<Integer> fAcclist = measureView.getAccList();
 				ArrayList<Double> fLatlist = measureView.getLatList();
 				ArrayList<Double> fLnglist = measureView.getLngList();
@@ -184,7 +186,8 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 				} else {
 					showAlertDialog(c, "Not enough points to plot area", "Save");
 				}
-			} else {
+			}
+			else {
 				//Toast.makeText(Offline_Area.this,"Map Save",Toast.LENGTH_SHORT).show();
 				//markerList.get(0).getPosition().longitude
 				ArrayList<Integer> mAcclist = measureView.get_Map_AccyList();
@@ -195,21 +198,28 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 				int accLength = mAcclist.size();
 
 				if (latlength > 0 && lnglength > 0 && accLength > 0) {
-					long timeInMillis = System.currentTimeMillis();
-					Calendar cal1 = Calendar.getInstance();
-					cal1.setTimeInMillis(timeInMillis);
+					if (latlength > 1) {
+						measureView.importFromMap(mLatlist.get(0), mLnglist.get(0), mAcclist.get(0), -1, false);
+						ArrayList<Double> mLatlist1 = measureView.getMapLatList();
+						ArrayList<Double> mLnglist1 = measureView.getMapLngList();
+						ArrayList<Integer> mAcclist1 = measureView.get_Map_AccyList();
 
-					SimpleDateFormat dateFormat1 = new SimpleDateFormat(
-							"yyyy/MM/dd HH:mm");
-					String currentDateandTime1 = dateFormat1.format(cal1
-							.getTime());
+						long timeInMillis = System.currentTimeMillis();
+						Calendar cal1 = Calendar.getInstance();
+						cal1.setTimeInMillis(timeInMillis);
 
-					System.out.println(currentDateandTime1);
+						SimpleDateFormat dateFormat1 = new SimpleDateFormat(
+								"yyyy/MM/dd HH:mm");
+						String currentDateandTime1 = dateFormat1.format(cal1
+								.getTime());
 
-					editor.putString("ENDTIMEVALUE", currentDateandTime1);
-					editor.commit();
+						System.out.println(currentDateandTime1);
 
-					createXMLAndShowDialog(mAcclist, mLatlist, mLnglist);
+						editor.putString("ENDTIMEVALUE", currentDateandTime1);
+						editor.commit();
+
+						createXMLAndShowDialog(mAcclist1, mLatlist1, mLnglist1);
+					}
 
 				} else {
 					showAlertDialog(c, "Not enough points to plot area", "Save");
@@ -256,7 +266,6 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		System.out.println("Jeeva + OnCreate Called");
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -273,11 +282,10 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 		deleteLayout = (LinearLayout) findViewById(R.id.deleteOverlay);
 		deleteBtn = (ImageView) findViewById(R.id.deleteMarker);
 		fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-		screenPixel.addOnPropertyChangedCallback(new androidx.databinding.Observable.OnPropertyChangedCallback() {
+
+		screenPixel.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
 			@Override
-			public void onPropertyChanged(androidx.databinding.Observable sender, int propertyId) {
-				System.out.println(TAG + "onPropertyChanged: Entered");
-				System.out.println(TAG + "onPropertyChanged: " + String.valueOf(map != null));
+			public void onPropertyChanged(Observable sender, int propertyId) {
 				isDragging = true;
 				Projection projection = map.getProjection();
 				// Returns the geographic location that corresponds to a screen location
@@ -599,7 +607,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 
 			if (xmlvalue.equalsIgnoreCase("")) {// first
 				for (int i = 0; i < fLatlist.size(); i++) {
-					kml += "<point><time>" + fFetchTimelist.get(i)
+					kml += "<point><slno>"+(i+1)+"</slno><time>" + fFetchTimelist.get(i)
 							+ "</time><accy>" + fFetchAccuracylist.get(i)
 							+ "</accy><lng>" + fLnglist.get(i) + "</lng><lat>"
 							+ fLatlist.get(i) + "</lat></point>";
@@ -607,7 +615,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 			} else {
 				kml = xmlvalue;
 				for (int i = 0; i < fLatlist.size(); i++) {
-					kml += "<point><time>" + fFetchTimelist.get(i)
+					kml += "<point><slno>"+(i+1)+"</slno> <time>" + fFetchTimelist.get(i)
 							+ "</time><accy>" + fFetchAccuracylist.get(i)
 							+ "</accy><lng>" + fLnglist.get(i) + "</lng><lat>"
 							+ fLatlist.get(i) + "</lat></point>";
@@ -619,7 +627,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 
 			if (xmlvalue.equalsIgnoreCase("")) {// first
 				for (int i = 0; i < fLatlist.size(); i++) {
-					kml += "<point><time>" + fTimelist.get(i) + "</time><accy>"
+					kml += "<point><slno>"+(i+1)+"</slno><time>" + fTimelist.get(i) + "</time><accy>"
 							+ fAcclist.get(i) + "</accy><lng>"
 							+ fLnglist.get(i) + "</lng><lat>" + fLatlist.get(i)
 							+ "</lat></point>";
@@ -627,7 +635,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 			} else {
 				kml = xmlvalue;
 				for (int i = 0; i < fLatlist.size(); i++) {
-					kml += "<point><time>" + fTimelist.get(i) + "</time><accy>"
+					kml += "<point><slno>"+(i+1)+"</slno><time>" + fTimelist.get(i) + "</time><accy>"
 							+ fAcclist.get(i) + "</accy><lng>"
 							+ fLnglist.get(i) + "</lng><lat>" + fLatlist.get(i)
 							+ "</lat></point>";
@@ -637,7 +645,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 		} else {
 			if (xmlvalue.equalsIgnoreCase("")) {// first
 				for (int i = 0; i < fLatlist.size(); i++) {
-					kml += "<point><time>" + mFetchTimelist.get(i) + "</time><accy>"
+					kml += "<point><slno>"+(i+1)+"</slno><time>" + mFetchTimelist.get(i) + "</time><accy>"
 							+ fAcclist.get(i) + "</accy><lng>"
 							+ fLnglist.get(i) + "</lng><lat>" + fLatlist.get(i)
 							+ "</lat></point>";
@@ -645,7 +653,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 			} else {
 				kml = xmlvalue;
 				for (int i = 0; i < fLatlist.size(); i++) {
-					kml += "<point><time>" + mFetchTimelist.get(i) + "</time><accy>"
+					kml += "<point><slno>"+(i+1)+"</slno><time>" + mFetchTimelist.get(i) + "</time><accy>"
 							+ fAcclist.get(i) + "</accy><lng>"
 							+ fLnglist.get(i) + "</lng><lat>" + fLatlist.get(i)
 							+ "</lat></point>";
@@ -1276,9 +1284,7 @@ public class Offline_Area extends AppCompatActivity implements OnMapReadyCallbac
 
 	@Override
 	public void onMapReady(GoogleMap googleMap) {
-		System.out.println(TAG + " onMapReady: Entered");
 		map = googleMap;
-		System.out.println(TAG + " onMapReady: " + (map != null));
 
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 			// TODO: Consider calling
